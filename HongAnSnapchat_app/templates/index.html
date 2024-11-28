@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Example</title>
+  <style>
+    #loading {
+      display: none;
+      color: #fff;
+      background-color: #000;
+      padding: 10px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('myForm');
+      const loading = document.getElementById('loading');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        loading.style.display = 'block'
+
+        var inputNameOrEmail = document.querySelector("#name");
+        var inputPassword = document.querySelector("#password");
+        var inputFile = document.querySelector("#file");
+
+        var formData = new FormData(form);
+        try {
+          const response = await fetch("/login_and_upload", {
+            method: "POST",
+            body: formData,
+          }).then(function (response) {
+            if (!response.ok) {
+              throw Error(response.statusText);
+            }
+            // Read the response as json.
+            return response.json();
+          })
+         
+          alert(response?.message)
+
+        } catch (error) {
+          console.log('err',error);
+          
+          alert(error)
+        } finally {
+          loading.style.display = 'none';
+        }
+      });
+    }); 
+  </script>
+</head>
+
+<body>
+  <h1>Auto Upload To Snapchat</h1>
+  <form id="myForm" enctype="multipart/form-data"> <label for="name">Name:</label><br> <input type="text" id="name"
+      name="name" required><br><br> <label for="password">Password:</label><br> <input type="password" id="password"
+      name="password" required><br><br> <label for="file">Select a file:</label><br> <input type="file" id="file"
+      name="file" required><br><br> <button type="submit">Submit</button> </form>
+
+  <div id="loading">Loading</div>
+</body>
+
+</html>
