@@ -16,6 +16,7 @@ def index():
 @api_bp.route("/login_and_upload", methods=["POST"])
 def login_and_upload():
     try:
+        logger.critical("Start process!")
         _name = request.form["name"]
         _password = request.form["password"]
         _file = request.files["file"]

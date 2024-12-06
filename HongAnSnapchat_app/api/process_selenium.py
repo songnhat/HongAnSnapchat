@@ -26,7 +26,14 @@ class _target_is(object):
 
 
 def setup():
-    driver = webdriver.Chrome()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("start-maximized")
+    chrome_options.add_argument("disable-infobars")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--headless")
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get("https://accounts.snapchat.com/accounts/v2/login")
     return driver
 
@@ -42,6 +49,8 @@ def process(name, password, file):
 
     wait = WebDriverWait(driver, timeout=5)
 
+    logger.critical("Complete config selenium!")
+
     # Enter Username page
     try:
         wait.until(
@@ -55,6 +64,8 @@ def process(name, password, file):
         )
     except Exception:
         return "Wrong login URL"
+
+    logger.critical("Found username input")
 
     time.sleep(2)
     try:
@@ -70,6 +81,8 @@ def process(name, password, file):
     except Exception:
         return "Cannot send username or email"
 
+    logger.critical("Send username/email")
+
     # Enter Password page
     try:
         wait.until(
@@ -80,6 +93,8 @@ def process(name, password, file):
         )
     except Exception:
         return "Cannot find enter password"
+
+    logger.critical("Found password input")
 
     time.sleep(2)
     try:
@@ -92,6 +107,8 @@ def process(name, password, file):
         submit_button.click()
     except Exception:
         return "Cannot send password"
+
+    logger.critical("Send password input")
 
     # After Login page
     try:
@@ -106,6 +123,8 @@ def process(name, password, file):
     except Exception:
         return "Wrong username or password"
 
+    logger.critical("Found welcome page")
+
     time.sleep(2)
     try:
         post_to_snapchat_button = driver.find_element(
@@ -115,6 +134,8 @@ def process(name, password, file):
         post_to_snapchat_button.click()
     except Exception:
         return "Cannot find post button"
+
+    logger.critical("Clicked create new post")
 
     # Sign in page
     try:
@@ -127,6 +148,8 @@ def process(name, password, file):
     except Exception:
         return "Cannot find post page"
 
+    logger.critical("Found create post page")
+
     time.sleep(2)
     try:
         sign_in_button = driver.find_element(
@@ -136,6 +159,8 @@ def process(name, password, file):
         sign_in_button.click()
     except Exception:
         return "Cannot find sign in button"
+
+    logger.critical("Clicked sign in")
 
     # New post page
     try:
@@ -147,6 +172,8 @@ def process(name, password, file):
         )
     except Exception:
         return "Cannot sign in"
+
+    logger.critical("Start upload image")
 
     time.sleep(2)
     try:
@@ -177,6 +204,8 @@ def process(name, password, file):
     except Exception:
         return "Cannot tick post to story / public story"
 
+    logger.critical("Clicked tick upload")
+
     # Start upload image
     time.sleep(2)
     try:
@@ -202,6 +231,8 @@ def process(name, password, file):
         logger.critical(e)
         return "Cannot load image"
 
+    logger.critical("Uploaded image")
+
     try:
         os.remove(upload_file)
     except Exception:
@@ -226,6 +257,8 @@ def process(name, password, file):
     except Exception:
         return "Image format have to be .PNG / .JPG and Resolution minimum: 1080x1920"
 
+    logger.critical("Click final post button!")
+
     # After click final post, wait to success
     time.sleep(2)
     try:
@@ -241,6 +274,10 @@ def process(name, password, file):
     except Exception:
         return "Upload failed"
 
+    logger.critical("Done")
+
     teardown(driver)
+
+    logger.critical("Teardown selenium")
 
     return 1
